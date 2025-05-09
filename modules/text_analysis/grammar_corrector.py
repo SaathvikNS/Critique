@@ -1,14 +1,18 @@
 import torch
 import language_tool_python
-import difflib
+# import difflib
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from gramformer import Gramformer 
 from sentence_splitter import chunk_text
-from flow_detector import correct_flow_issues
+# from flow_detector import correct_flow_issues
+# from type_detector import detect_types
+# from readability_score import readability_score
 
 model_name = "modules/text_analysis/model/model"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 tool = language_tool_python.LanguageTool('en-US')
+gf = Gramformer(models=1, use_gpu=False)
 
 def correct_with_t5(text: str) -> str:
     input_text = f"grammar: {text}"
@@ -26,47 +30,31 @@ def apply_languagetool_suggestion(text):
             text = text[:match.offset] + match.replacements[0] + text[match.offset + match.errorLength:]
     return text
 
-def explain_with_languagetool(text: str):
-    matches = tool.check(text)
-    explanations = []
-    for match in matches:
-        explanations.append({
-            "issue": match.ruleIssueType,
-            "category": match.category,
-            "message": match.message,
-            "suggestions": match.replacements,
-            "context": text[match.offset:match.offset + match.errorLength]
-        })
-    return explanations
-
-def diff_suggestions(original: str, corrected: str):
-    diff = list(difflib.ndiff(original.split(), corrected.split()))
-    suggestions = []
-    for i, token in enumerate(diff):
-        if token.startswith("- "):
-            original_word = token[2:]
-            if i + 1 < len(diff) and diff[i + 1].startswith("+ "):
-                new_word = diff[i + 1][2:]
-                suggestions.append({
-                    "original": original_word,
-                    "replacement": new_word
-                })
-    return suggestions
-
 def analyze_text(text: str):
-    chunks = chunk_text(text)  
     corrected_chunks = []
+    issue_indeces = []
+
+    # chunking and correction
+    chunks = chunk_text(text)  
     for chunk in chunks:
-        corrected_flow = correct_flow_issues(chunk)
-        corrected_text = correct_with_t5(corrected_flow)
+        # corrected_flow = correct_flow_issues(chunk)
+        corrected_text = correct_with_t5(chunk)
         applied_suggestions = apply_languagetool_suggestion(corrected_text)
-        corrected_chunks.append(applied_suggestions)
+        gramformer_corrected = list(gf.correct(applied_suggestions))
+        corrected_chunks.append(gramformer_corrected[0])
+
     corrected_text = " ".join(corrected_chunks)  
-    explanations = explain_with_languagetool(text)
-    suggestion_diffs = diff_suggestions(text, corrected_text)
+
+    # finding differences
+    suggestion_diffs = gf.get_edits(text, corrected_text)
+
+    # fetching index of issues
+    for suggestion in suggestion_diffs:
+        issue_indeces.append((suggestion[2], suggestion[3]))
+    
     return {
         "original_text": text,
-        "corrected_text": corrected_text,
-        "diff_suggestions": suggestion_diffs,
-        "explanations": explanations,
+        "issue_indeces": issue_indeces,
+        # "corrected_text": corrected_text,
+        # "diff_suggestions": suggestion_diffs,
     }
