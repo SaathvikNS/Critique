@@ -16,6 +16,8 @@ The project is currently in development, and the following functionalities have 
   - Keyword extraction
   - Word frequency
   - Key-phrase extraction
+  - Topic Detection
+  - Entity Recognition
 
 ## Future Updates
 

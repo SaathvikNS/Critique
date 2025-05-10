@@ -4,7 +4,9 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 # from grammar_corrector import analyze_text
 # from readability_score import readability_score
 # from tone_detection import detect_tone
-from keyword_extraction_and_density import get_word_analysis
+# from keyword_extraction_and_density import get_word_analysis
+# from topic_detection import get_topic
+from entity_recognition import entity_recognition
 
 sample = [ 
     "their going to the park later today but I dont think its a good idea because its suppose to rain. The kids was playing outside untill it got dark, they didnt had no jackets so they feeled cold. I should of brought some snacks, but I forgeted. Also, the dog runned away again, its really being a problem lately.",
@@ -18,6 +20,8 @@ sample = [
     "My friend invite me to a party last night but I didn't know it was formal event. I shows up wearing casual clothes while everyone was dressing fancy. I feel embarased and wanted to leave but she insist me to stayed. The music was too loud and peoples was shouting instead of talking. Also, the food wasn't taste good and there were no enough drinks. One guy accidentally poured juice on my shoes and just says sorry like it nothing happen. I think I shouldn't have come there in first place. It was the worsted party I ever been and I hope I not going to another soon.",
     'Their going to the libary to study there lesssons, but they doesn’t has enogh time becaus the exam are tomorow',
     "The convoluted concatenation of polysyllabic lexical units, often exhibiting a marked predilection for abstract nominalizations and intricate syntactic architectures, engenders a formidable impediment to facile comprehension for individuals unaccustomed to such prolix and abstruse discursive modalities, thereby necessitating a significant cognitive expenditure for even a rudimentary grasp of the intended semantic content, which, in its very essence, frequently partakes of an obfuscatory tendency, further exacerbating the inherent difficulties in deciphering the underlying propositional framework.",
+    "Yesterday, Elon Musk, the CEO of Tesla, announced a new Gigafactory in Berlin, Germany. He mentioned that the facility will primarily focus on producing the Model Y and aims to employ thousands of people in the region. The announcement was made during a press conference held at 10 AM local time and was live-streamed globally. Shares of Tesla Inc. (TSLA) saw a jump of 2.5% following the news. Saathvik N Sharma made this statement clear during his speech in Bengaluru",
+    "Last week, Professor Anya Sharma from Stanford University published a groundbreaking paper in the journal Nature. The research focused on the impact of climate change on the Amazon rainforest, a vast location in South America. According to the study, deforestation rates have increased by 15% in the past year. The findings were presented at the International Climate Summit held in Paris, France, where Greta Thunberg also delivered a keynote speech.",
 ]
 
 for num, i in enumerate(sample):
@@ -56,29 +60,44 @@ for num, i in enumerate(sample):
     #     print(f"• In {other_tone_label}: {other_tone_example}")
 
     """keyword extraction and density analysis"""
-    word_analysis = get_word_analysis(i)
+    # word_analysis = get_word_analysis(i)
 
-    print()
-    print(f'word_count: {word_analysis["word_count"]}')
-    print()
-    print(f'keywords: {word_analysis["keywords"]}')
-    print()
-    print(f'phrases: {word_analysis["phrases"]}')
-    print()
-    print(f'syllable_count: {word_analysis["syllable_count"]}')
-    print()
-    print(f'lexicon_count: {word_analysis["lexicon_count"]}')
-    print()
-    print(f'sentence_count: {word_analysis["sentence_count"]}')
-    print()
-    print(f'character_count: {word_analysis["character_count"]}')
-    print()
-    print(f'average_words_per_sentence: {word_analysis["average_words_per_sentence"]}')
-    print()
-    print(f'unique_words: {word_analysis["unique_words"]}')
-    print()
-    print(f'type_token_ratio: {word_analysis["type_token_ratio"]}')
-    print()
+    # print()
+    # print(f'word_count: {word_analysis["word_count"]}')
+    # print()
+    # print(f'keywords: {word_analysis["keywords"]}')
+    # print()
+    # print(f'phrases: {word_analysis["phrases"]}')
+    # print()
+    # print(f'syllable_count: {word_analysis["syllable_count"]}')
+    # print()
+    # print(f'lexicon_count: {word_analysis["lexicon_count"]}')
+    # print()
+    # print(f'sentence_count: {word_analysis["sentence_count"]}')
+    # print()
+    # print(f'character_count: {word_analysis["character_count"]}')
+    # print()
+    # print(f'average_words_per_sentence: {word_analysis["average_words_per_sentence"]}')
+    # print()
+    # print(f'unique_words: {word_analysis["unique_words"]}')
+    # print()
+    # print(f'type_token_ratio: {word_analysis["type_token_ratio"]}')
+    # print()
+
+    """topic detection"""
+    # topic = get_topic(i)
+
+    # for key, value in topic.items():
+    #     print(f"{key}    ->    {(value * 100):.2f} %")
+
+    """entity recognition"""
+    entities = entity_recognition(i)
+
+    if len(entities) != 0:
+        for entity in entities:
+            print(f"{entity[0]} ({entity[1]})")
+    else:
+        print(f"No entity found!")
 
     """dummy"""
     # print(f"\nCorrected Text:", grammar_correction["corrected_text"])
