@@ -18,6 +18,7 @@ The project is currently in development, and the following functionalities have 
   - Key-phrase extraction
   - Topic Detection
   - Entity Recognition
+  - Basic Summarization
 
 ## Future Updates
 
