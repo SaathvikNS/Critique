@@ -8,4 +8,9 @@ def entity_recognition(text: str):
 
     entities = [(ent.text, ent.label_) for ent in doc.ents if ent.label_ in target_labels]
 
+    """review output contains:
+    1. list of entities in text
+    2. labe of that entity
+    """
+
     return entities

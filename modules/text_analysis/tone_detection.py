@@ -107,8 +107,7 @@ def detect_tone(text: str):
     output['current_tone_example'] = {result['label']: tone_examples[result['label']][option]}
     output['other_tone_example'] = { key: value[option] for key, value in tone_examples.items() if key != result['label']}
 
-    """
-    output has:
+    """review output contains:
     1. tone
     2. constant
     3. current_tone_example

@@ -9,4 +9,8 @@ def get_topic(text: str):
 
     topic = {key: value for key, value in zip(detection["labels"], detection["scores"])}
 
+    """review output contains:
+    1. topics list
+    2. confidence score of each topic
+    """
     return topic

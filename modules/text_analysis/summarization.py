@@ -16,4 +16,8 @@ def get_summary(text: str):
         min_len = max(5, int(word_count * 0.2))
 
     summary = summarizer(text, max_length=max_len, min_length=min_len, do_sample=False)
+
+    """review output contains:
+    1. short summary of original text
+    """
     return summary[0]['summary_text'].strip()
