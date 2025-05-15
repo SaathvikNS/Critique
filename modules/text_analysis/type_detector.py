@@ -1,102 +1,78 @@
-import difflib
+#refer ADJ: Adjective error
+#refer ADJ:FORM: Adjective form (e.g., comparative/superlative)
+#refer ADV: Adverb error
+#refer CONJ: Conjunction error
+#refer CONTR: Contraction error
+#refer DET: Determiner error (e.g., articles, possessives)
+#refer MORPH: Morphology (same lemma, different form - often a root form issue)
+#refer NOUN: Noun error (general)
+#refer NOUN:INFL: Noun inflection (e.g., count/mass, pluralization)
+#refer NOUN:NUM: Noun number (singular/plural agreement with context)
+#refer NOUN:POSS: Noun possessive (e.g., 's, s')
+#refer ORTH: Orthography (case or whitespace errors)
+#refer OTHER: A general category for errors that don't fit into other types
+#refer PART: Particle error (e.g., in phrasal verbs)
+#refer PREP: Preposition error
+#refer PRON: Pronoun error (e.g., case, number, type)
+#refer PUNCT: Punctuation error
+#refer SPELL: Spelling error
+#refer VERB: Verb error (general)
+#refer VERB:FORM: Verb form (e.g., infinitive, gerund, participle)
+#refer VERB:INFL: Verb inflection (general tense/agreement issues not specific enough for other verb tags)
+#refer VERB:SVA: Subject-verb agreement error
+#refer VERB:TENSE: Verb tense error (including auxiliary verbs and modals related to tense)
+#refer WO: Word order error
 
-# Predefined confusion sets (can expand this)
-COMMON_CONFUSIONS = {
-    ('your', "you're"),
-    ('there', 'their'),
-    ('their', 'there'),
-    ('buyed', 'bought'),
-    ('alot', 'a lot'),
-    ('its', "it's"),
-    ('it', 'its'),
+def get_critique():
+    output = {}
+    original = {}
+    corrected = {}
+
+    original["word"] = "original word comes here"
+    original["definition"] = "definition comes here"
+    original["usage"] = "when to use"
+    original["example"] = "short example"
+
+    corrected["word"] = "corrected word comes here"
+    corrected["definition"] = "definition comes here"
+    corrected["usage"] = "when to use"
+    corrected["example"] = "short example"
+
+    output["category"] = "category comes here"
+    output["critique"] = "critique comes here"
+    output["original"] = original
+    output["corrected"] = corrected
+
+    return output
+
+"""format of output
+{
+  "category": "Grammar Rule / Category (e.g., Subject-Verb Agreement)",
+  "critique": "Explanation of why the correction is needed.",
+  "original": {
+    "word": "was",
+    "definition": "Used as the past tense of the verb 'be' with singular subjects.",
+    "usage": "Used with 'I', 'he', 'she', or 'it'",
+    "example": "The kid was outside."
+  },
+  "corrected": {
+    "word": "were",
+    "definition": "Used as the past tense of the verb 'be' with plural or second-person subjects.",
+    "usage": "Used with 'you', 'we', or 'they'",
+    "example": "The kids were outside."
+  }
 }
+"""
 
-# Helper function
-def is_common_confusion(orig, corr):
-    return (orig.lower(), corr.lower()) in COMMON_CONFUSIONS
-
-def is_spelling_error(orig, corr):
-    # Rough simple check based on difflib sequence matching
-    return difflib.SequenceMatcher(None, orig.lower(), corr.lower()).ratio() > 0.7 and orig.lower() != corr.lower()
-
-def is_case_change(orig, corr):
-    return orig.lower() == corr.lower() and orig != corr
-
-def is_punctuation_change(orig, corr):
-    punctuations = ',.;:!?'
-    return (orig.strip(punctuations) == corr.strip(punctuations))
-
-def is_verb_form_error(orig, corr):
-    irregular_verbs = {
-        'buy': 'bought', 'go': 'went', 'see': 'saw', 'come': 'came',
-        'run': 'ran', 'take': 'took', 'write': 'wrote', 'eat': 'ate',
-        'choose': 'chose', 'break': 'broke', 'begin': 'began'
-        # Add more if needed
-    }
-    return (orig.lower() in irregular_verbs and corr.lower() == irregular_verbs[orig.lower()]) or (corr.lower() in irregular_verbs.values())
-
-def is_plural_form_error(orig, corr):
-    return (orig.lower() + 's' == corr.lower()) or (orig.lower() == corr.lower() + 's')
-
-def is_tense_change(orig, corr):
-    # Very rough heuristic: word changes with 'ed' at end
-    return orig.lower() + 'ed' == corr.lower() or (orig.lower().endswith('e') and orig.lower() + 'd' == corr.lower())
-
-def is_subject_verb_agreement_error(orig, corr):
-    # example: look → looks
-    if orig.endswith('s') or corr.endswith('s'):
-        return True
-    return False
-
-def detect_types(original_tokens, corrected_tokens):
-    types = []
-    
-    orig_text = " ".join(original_tokens)
-    corr_text = " ".join(corrected_tokens)
-    
-    # Token based checks
-    if len(original_tokens) == 1 and len(corrected_tokens) == 1:
-        orig = original_tokens[0]
-        corr = corrected_tokens[0]
-
-        if is_common_confusion(orig, corr):
-            types.append("common_confusion")
-        if is_case_change(orig, corr):
-            types.append("case_change")
-        if is_spelling_error(orig, corr):
-            types.append("spelling")
-        if is_punctuation_change(orig, corr):
-            types.append("punctuation")
-        if is_plural_form_error(orig, corr):
-            types.append("plural_form")
-        if is_verb_form_error(orig, corr):
-            types.append("verb_form")
-        if is_tense_change(orig, corr):
-            types.append("tense_change")
-        if is_subject_verb_agreement_error(orig, corr):
-            types.append("subject_verb_agreement")
-    else:
-        # Phrase level
-        if any(is_punctuation_change(tok1, tok2) for tok1, tok2 in zip(original_tokens, corrected_tokens)):
-            types.append("punctuation")
-        if any(is_case_change(tok1, tok2) for tok1, tok2 in zip(original_tokens, corrected_tokens)):
-            types.append("case_change")
-        if any(is_spelling_error(tok1, tok2) for tok1, tok2 in zip(original_tokens, corrected_tokens)):
-            types.append("spelling")
-        if any(is_common_confusion(tok1, tok2) for tok1, tok2 in zip(original_tokens, corrected_tokens)):
-            types.append("common_confusion")
-        if any(is_verb_form_error(tok1, tok2) for tok1, tok2 in zip(original_tokens, corrected_tokens)):
-            types.append("verb_form")
-        if any(is_tense_change(tok1, tok2) for tok1, tok2 in zip(original_tokens, corrected_tokens)):
-            types.append("tense_change")
-        if any(is_plural_form_error(tok1, tok2) for tok1, tok2 in zip(original_tokens, corrected_tokens)):
-            types.append("plural_form")
-        if any(is_subject_verb_agreement_error(tok1, tok2) for tok1, tok2 in zip(original_tokens, corrected_tokens)):
-            types.append("subject_verb_agreement")
-
-        types.append("rephrasing")
-    
-    if not types:
-        types.append("other")
-    
-    return types
+"""format of tooltip
+Subject-Verb Agreement
+Due to subject-verb agreement, “were” would be a better word choice here.
+______________________________________________________________________
+Was
+verb form of ‘be’
+used as the past tense of the verb "be" with singular subjects (I, he, she, it) and with the first-person singular (I)
+______________________________________________________________________
+Were
+verb form of ‘be’
+used as the past tense of the verb "be" for second-person singular ("you"), first-person plural ("we"), and third-person plural ("they")
+"""

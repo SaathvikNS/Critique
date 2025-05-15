@@ -39,7 +39,7 @@ def get_word_analysis(text: str):
     output["unique_words"] = set(output["word_count"])
     output["type_token_ratio"] = (len(output["unique_words"])/output["lexicon_count"]) * 100
     
-    """review output contains:
+    """format of output:
     1. word count
     2. keywords
     3. phrases

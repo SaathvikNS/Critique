@@ -63,7 +63,7 @@ def readability_score(text):
 
     complex_words = get_simple_replacements(text, scores["reading_ease"])
 
-    """review output contains:
+    """format of output:
     1. flesch reading ease score
     2. text standard grade
     3. reading time

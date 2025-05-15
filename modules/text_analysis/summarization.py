@@ -17,7 +17,7 @@ def get_summary(text: str):
 
     summary = summarizer(text, max_length=max_len, min_length=min_len, do_sample=False)
 
-    """review output contains:
+    """format of output:
     1. short summary of original text
     """
     return summary[0]['summary_text'].strip()

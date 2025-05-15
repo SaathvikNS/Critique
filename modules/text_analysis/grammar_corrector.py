@@ -1,12 +1,8 @@
 import torch
 import language_tool_python
-# import difflib
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from gramformer import Gramformer 
 from sentence_splitter import chunk_text
-# from flow_detector import correct_flow_issues
-# from type_detector import detect_types
-# from readability_score import readability_score
 
 model_name = "modules/text_analysis/model/model"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -34,10 +30,8 @@ def analyze_text(text: str):
     corrected_chunks = []
     issue_indeces = []
 
-    # chunking and correction
     chunks = chunk_text(text)  
     for chunk in chunks:
-        # corrected_flow = correct_flow_issues(chunk)
         corrected_text = correct_with_t5(chunk)
         applied_suggestions = apply_languagetool_suggestion(corrected_text)
         gramformer_corrected = list(gf.correct(applied_suggestions))
@@ -45,16 +39,14 @@ def analyze_text(text: str):
 
     corrected_text = " ".join(corrected_chunks)  
 
-    # finding differences
-    suggestion_diffs = gf.get_edits(text, corrected_text)
+    edits = gf.get_edits(text, corrected_text)
 
-    # fetching index of issues
-    for suggestion in suggestion_diffs:
+    for suggestion in edits:
         issue_indeces.append((suggestion[2], suggestion[3]))
-    
+
     return {
         "original_text": text,
         "issue_indeces": issue_indeces,
-        # "corrected_text": corrected_text,
-        # "diff_suggestions": suggestion_diffs,
+        "corrected_text": corrected_text,
+        "diff_suggestions": edits,
     }
