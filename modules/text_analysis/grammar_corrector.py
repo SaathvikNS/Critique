@@ -3,6 +3,8 @@ import language_tool_python
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from gramformer import Gramformer 
 from sentence_splitter import chunk_text
+from type_detector import get_critique
+import string
 
 model_name = "modules/text_analysis/model/model"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -41,6 +43,8 @@ def analyze_text(text: str):
 
     edits = gf.get_edits(text, corrected_text)
 
+    critique = get_critique(edits)
+
     for suggestion in edits:
         issue_indeces.append((suggestion[2], suggestion[3]))
 
@@ -48,5 +52,5 @@ def analyze_text(text: str):
         "original_text": text,
         "issue_indeces": issue_indeces,
         "corrected_text": corrected_text,
-        "diff_suggestions": edits,
+        "diff_suggestions": critique,
     }

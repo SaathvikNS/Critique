@@ -23,27 +23,146 @@
 #refer VERB:TENSE: Verb tense error (including auxiliary verbs and modals related to tense)
 #refer WO: Word order error
 
-def get_critique():
-    output = {}
-    original = {}
-    corrected = {}
+import string
+import Levenshtein
+from spellchecker import SpellChecker
+from gramformer import Gramformer
 
-    original["word"] = "original word comes here"
-    original["definition"] = "definition comes here"
-    original["usage"] = "when to use"
-    original["example"] = "short example"
+gf = Gramformer(models=1, use_gpu=False)
+spell = SpellChecker()
 
-    corrected["word"] = "corrected word comes here"
-    corrected["definition"] = "definition comes here"
-    corrected["usage"] = "when to use"
-    corrected["example"] = "short example"
+#todo this function
+def get_definition(word):
+    return f"definition of {word}"
 
-    output["category"] = "category comes here"
-    output["critique"] = "critique comes here"
-    output["original"] = original
-    output["corrected"] = corrected
+# todo this function
+def get_when_to_use(word):
+    return f"when to use {word}"
+
+# todo this function
+def get_example(word):
+    return f"example of {word}"
+
+def get_outliers(original, corrected):
+    outlier_edits = gf.get_edits("".join(char for char in original if char not in string.punctuation), "".join(char for char in corrected if char not in string.punctuation))
+    return outlier_edits[0]
+
+def get_other_category(original, corrected):
+    no_punc_original = "".join(char for char in original if char.isalpha() or char==" ")
+    no_punc_corrected = "".join(char for char in corrected if char.isalpha() or char==" ")
+
+    dos = ["do", "did", "does", "dont", "didnt", "doesnt", "don't", "didn't", "doesn't"]
+
+    if no_punc_original == no_punc_corrected:
+        return "Punctuation Error"
+    if original.lower() == "their" or corrected.lower() == "they are" or corrected.lower() == "they're":
+        return "Lexical Error"
+    if original == "":
+        return "Missing Word/s Added"
+    if corrected == "":
+        return "Extra Word/s Omitted"
+    if Levenshtein.distance(original, corrected) >= 5:
+        return "Rephrased"
+    if Levenshtein.distance(original, corrected) < 5 and len(original) < 5:
+        return "Lexical Error"
+    if (original.lower() == "of" and corrected.lower() == "have") or (original.lower() == "have" and corrected.lower() == "of"):
+        return "Lexical Error"
+    if (original.lower() == "who" and corrected.lower() == "whose") or (original.lower() == "whose" and corrected.lower() == "who"):
+        return "Pronoun Case Error"
+    if original.lower() in dos or corrected.lower() in dos:
+        return "Lexical Error"
+    if spell.correction(no_punc_original) == no_punc_corrected:
+        return "Spelling Error"
+    
+    return None
+
+def get_category(type, original, corrected):
+    if original == "":
+        return "Missing Word/s Added"
+    if corrected == "":
+        return "Extra Word/s Omitted"
+    match type:
+        case "ADJ": 
+            return "Adjective Error"
+        case "ADJ:FORM": 
+            return "Adjective Form Error"
+        case "ADV": 
+            return "Adverb Error"
+        case "CONJ": 
+            return "Conjunction Error"
+        case "CONTR": 
+            return "Contraction Error"
+        case "DET": 
+            return "Determiner Error"
+        case "MORPH": 
+            return "Morphology"
+        case "NOUN": 
+            return "Noun Error"
+        case "NOUN:INFL": 
+            return "Noun inflection"
+        case "NOUN:NUM": 
+            return "Noun number"
+        case "NOUN:POSS": 
+            return "Noun possessive"
+        case "ORTH": 
+            return "Orthography"
+        case "PART": 
+            return "Particle Error"
+        case "PREP": 
+            return "Preposition Error"
+        case "PRON": 
+            return "Pronoun Error"
+        case "PUNCT": 
+            return "Punctuation Error"
+        case "SPELL": 
+            return "Spelling Error"
+        case "VERB": 
+            return "Verb Error"
+        case "VERB:FORM": 
+            return "Verb form"
+        case "VERB:INFL": 
+            return "Verb inflection"
+        case "VERB:SVA": 
+            return "Subject-verb agreement Error"
+        case "VERB:TENSE": 
+            return "Verb tense Error"
+        case "WO": 
+            return "Word order Error"
+        case default:
+            return None
+
+def get_critique_statements(blocks):
+    return f"generated critique using {blocks[0]}, {blocks[1]}, and {blocks[2]}"
+
+def get_critique(edits):
+    output = []
+
+    for edit in edits:
+        temp = {}
+        original = {}
+        corrected = {}
+
+        original["word"] = edit[1]
+        original["definition"] = get_definition(original["word"])
+        original["usage"] = get_when_to_use(original["word"])
+        original["example"] = get_example(original["word"])
+
+        corrected["word"] = edit[4]
+        corrected["definition"] = get_definition(corrected["word"])
+        corrected["usage"] = get_when_to_use(corrected["word"])
+        corrected["example"] = get_example(corrected["word"])
+
+        temp["category"] = (get_category(edit[0], edit[1], edit[4]) if edit[0] !="OTHER" else get_other_category(edit[1], edit[4])) or get_outliers(edit[1], edit[4]) or edit[0]
+        temp["critique"] = get_critique_statements((edit[0], edit[1], edit[4]))
+        temp["original"] = original
+        temp["corrected"] = corrected
+
+        output.append(temp)
 
     return output
+"""note what's done
+1. Category
+"""
 
 """format of output
 {
