@@ -27,6 +27,8 @@ import string
 import Levenshtein
 from spellchecker import SpellChecker
 from gramformer import Gramformer
+from constants import templates
+from random import randint
 
 gf = Gramformer(models=1, use_gpu=False)
 spell = SpellChecker()
@@ -43,9 +45,15 @@ def get_when_to_use(word):
 def get_example(word):
     return f"example of {word}"
 
+# todo this function
+def get_critique_statements(category, original, corrected):
+    choice = randint(0,4)
+    critique = templates[category][choice]
+    return critique.format(original=original, corrected=corrected)
+
 def get_outliers(original, corrected):
     outlier_edits = gf.get_edits("".join(char for char in original if char not in string.punctuation), "".join(char for char in corrected if char not in string.punctuation))
-    return outlier_edits[0]
+    return get_category(outlier_edits[0], original, corrected) if outlier_edits[0] != "OTHER" else "Unrecognized Error"
 
 def get_other_category(original, corrected):
     no_punc_original = "".join(char for char in original if char.isalpha() or char==" ")
@@ -68,7 +76,7 @@ def get_other_category(original, corrected):
     if (original.lower() == "of" and corrected.lower() == "have") or (original.lower() == "have" and corrected.lower() == "of"):
         return "Lexical Error"
     if (original.lower() == "who" and corrected.lower() == "whose") or (original.lower() == "whose" and corrected.lower() == "who"):
-        return "Pronoun Case Error"
+        return "Pronoun Error"
     if original.lower() in dos or corrected.lower() in dos:
         return "Lexical Error"
     if spell.correction(no_punc_original) == no_punc_corrected:
@@ -131,9 +139,6 @@ def get_category(type, original, corrected):
         case default:
             return None
 
-def get_critique_statements(blocks):
-    return f"generated critique using {blocks[0]}, {blocks[1]}, and {blocks[2]}"
-
 def get_critique(edits):
     output = []
 
@@ -152,8 +157,9 @@ def get_critique(edits):
         corrected["usage"] = get_when_to_use(corrected["word"])
         corrected["example"] = get_example(corrected["word"])
 
-        temp["category"] = (get_category(edit[0], edit[1], edit[4]) if edit[0] !="OTHER" else get_other_category(edit[1], edit[4])) or get_outliers(edit[1], edit[4]) or edit[0]
-        temp["critique"] = get_critique_statements((edit[0], edit[1], edit[4]))
+        category = (get_category(edit[0], edit[1], edit[4]) if edit[0] !="OTHER" else get_other_category(edit[1], edit[4])) or get_outliers(edit[1], edit[4]) or "Unrecognized Error"
+        temp["category"] = category
+        temp["critique"] = get_critique_statements(category, edit[1], edit[4])
         temp["original"] = original
         temp["corrected"] = corrected
 
@@ -162,6 +168,12 @@ def get_critique(edits):
     return output
 """note what's done
 1. Category
+5. critique
+"""
+"""todo the following:
+2. definition
+3. usage
+4. example
 """
 
 """format of output

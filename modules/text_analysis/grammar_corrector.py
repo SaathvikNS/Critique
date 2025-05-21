@@ -31,6 +31,7 @@ def apply_languagetool_suggestion(text):
 def analyze_text(text: str):
     corrected_chunks = []
     issue_indeces = []
+    correct_indeces = []
 
     chunks = chunk_text(text)  
     for chunk in chunks:
@@ -47,10 +48,14 @@ def analyze_text(text: str):
 
     for suggestion in edits:
         issue_indeces.append((suggestion[2], suggestion[3]))
+    for suggestion in edits:
+        correct_indeces.append((suggestion[5], suggestion[6]))
 
     return {
         "original_text": text,
         "issue_indeces": issue_indeces,
         "corrected_text": corrected_text,
+        "correct_indeces": correct_indeces,
+        "edit":edits,
         "diff_suggestions": critique,
     }
