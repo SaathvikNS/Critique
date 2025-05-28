@@ -33,13 +33,13 @@ const AppSidebar = () => {
             { theme === "dark" ? (
                 !open ?
                 <button onClick={toggleSidebar} className='cursor-pointer'>
-                  <img src='/src/assets/logo-light.png' className='h-5' /> 
-                </button> : <img src='/src/assets/logo-light.png' className='h-5' /> 
+                  <img src='/Images/logo-light.png' className='h-5' /> 
+                </button> : <img src='/Images/logo-light.png' className='h-5' /> 
               ) : (
                 !open ?
                 <button onClick={toggleSidebar} className='cursor-pointer'>
-                  <img src='/src/assets/logo-dark.png' className='h-5' /> 
-                </button> : <img src='/src/assets/logo-dark.png' className='h-5' /> 
+                  <img src='/Images/logo-dark.png' className='h-5' /> 
+                </button> : <img src='/Images/logo-dark.png' className='h-5' /> 
               )
             }
             <button onClick={toggleSidebar} className='cursor-pointer'>
@@ -65,7 +65,7 @@ const AppSidebar = () => {
             <Separator className='my-1 '/>
           </div>
           {open ? (
-            <div className='mt-4 h-max pl-3.5'>
+            <div className='mt-4 h-max pl-3.5 overflow-hidden'>
               <div className='flex w-full items-center'>
                 <BadgeInfo className='!w-5 !h-5' color={theme ==="dark" ? '#a1a1a1' : '#737373'} />
                 <span className='pl-3 dark:text-neutral-400 text-neutral-500'>{tab.charAt(0).toUpperCase() + tab.slice(1)} Analysis</span>

@@ -29,7 +29,7 @@ const TextPage = () => {
         exit={{marginTop: '1rem'}}
         transition={{duration: 0.5}}
         onAnimationComplete={()=>{setMoved(true)}}
-        className="select-none font-extrabold tracking-wide text-2xl text-foreground mb-5 mt-40"
+        className="select-none font-extrabold tracking-wide text-2xl dark:text-foreground text-neutral-700 mb-5 mt-40"
       >
         Text Analysis
       </motion.h1>
@@ -93,7 +93,7 @@ const TextPage = () => {
       </AnimatePresence>
 
       <AnimatePresence>
-        
+
       </AnimatePresence>
 
     </div>
