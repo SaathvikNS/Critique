@@ -27,7 +27,7 @@ import string
 import Levenshtein
 from spellchecker import SpellChecker
 from gramformer import Gramformer
-from constants import templates
+from modules.text_analysis.constants import templates
 from random import randint
 
 gf = Gramformer(models=1, use_gpu=False)
@@ -45,7 +45,6 @@ def get_when_to_use(word):
 def get_example(word):
     return f"example of {word}"
 
-# todo this function
 def get_critique_statements(category, original, corrected):
     choice = randint(0,4)
     critique = templates[category][choice]
@@ -144,24 +143,24 @@ def get_critique(edits):
 
     for edit in edits:
         temp = {}
-        original = {}
-        corrected = {}
+        # original = {}
+        # corrected = {}
 
-        original["word"] = edit[1]
-        original["definition"] = get_definition(original["word"])
-        original["usage"] = get_when_to_use(original["word"])
-        original["example"] = get_example(original["word"])
+        # original["word"] = edit[1]
+        # original["definition"] = get_definition(original["word"])
+        # original["usage"] = get_when_to_use(original["word"])
+        # original["example"] = get_example(original["word"])
 
-        corrected["word"] = edit[4]
-        corrected["definition"] = get_definition(corrected["word"])
-        corrected["usage"] = get_when_to_use(corrected["word"])
-        corrected["example"] = get_example(corrected["word"])
+        # corrected["word"] = edit[4]
+        # corrected["definition"] = get_definition(corrected["word"])
+        # corrected["usage"] = get_when_to_use(corrected["word"])
+        # corrected["example"] = get_example(corrected["word"])
 
         category = (get_category(edit[0], edit[1], edit[4]) if edit[0] !="OTHER" else get_other_category(edit[1], edit[4])) or get_outliers(edit[1], edit[4]) or "Unrecognized Error"
         temp["category"] = category
         temp["critique"] = get_critique_statements(category, edit[1], edit[4])
-        temp["original"] = original
-        temp["corrected"] = corrected
+        # temp["original"] = original
+        # temp["corrected"] = corrected
 
         output.append(temp)
 

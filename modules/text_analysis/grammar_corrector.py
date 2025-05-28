@@ -2,8 +2,8 @@ import torch
 import language_tool_python
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from gramformer import Gramformer 
-from sentence_splitter import chunk_text
-from type_detector import get_critique
+from modules.text_analysis.sentence_splitter import chunk_text
+from modules.text_analysis.type_detector import get_critique
 import string
 
 model_name = "modules/text_analysis/model/model"
@@ -57,5 +57,5 @@ def analyze_text(text: str):
         "corrected_text": corrected_text,
         "correct_indeces": correct_indeces,
         "edit":edits,
-        "diff_suggestions": critique,
+        "critique": critique,
     }
