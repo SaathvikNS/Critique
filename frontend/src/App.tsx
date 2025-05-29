@@ -11,6 +11,7 @@ import { Tabs, TabsContent } from "./components/ui/tabs";
 import TextPage from "./pages/TextPage";
 import ImagePage from "./pages/ImagePage";
 import AudioPage from "./pages/AudioPage";
+import { ScrollArea } from "./components/ui/scroll-area";
 
 const App = () => {
 
@@ -30,9 +31,8 @@ const App = () => {
   return (
     <>
       <AppSidebar />
-      <div className="w-full h-screen flex flex-col">
-        <div className={" flex-1 flex flex-col min-h-0 dark:bg-neutral-800 bg-white"}>
-          <Tabs defaultValue="text" value={tab} onValueChange={setTab} className="flex flex-col flex-1">
+      <div className="w-full max-h-screen flex flex-col  dark:bg-neutral-800 bg-white">
+          <Tabs defaultValue="text" value={tab} onValueChange={setTab} className="flex flex-col h-max">
 
             {/* Header section */}
             <header className="flex items-center justify-between px-5 py-2 shrink-0">
@@ -48,19 +48,20 @@ const App = () => {
               <Separator className="bg-border h-px" />
             </div>
 
-            <main className="flex-1 overflow-scroll p-4 [scrollbar-width:none]">
-              <TabsContent value="text" className="h-full">
-                <TextPage />
-              </TabsContent>
-              <TabsContent value="image" className="h-full">
-                <ImagePage />
-              </TabsContent>
-              <TabsContent value="audio" className="h-full">
-                <AudioPage />
-              </TabsContent>
+            <main className="flex-1 p-4 max-h-[90vh]">
+              <ScrollArea className="h-full">
+                <TabsContent value="text" className="h-full">
+                  <TextPage />
+                </TabsContent>
+                <TabsContent value="image" className="h-full">
+                  <ImagePage />
+                </TabsContent>
+                <TabsContent value="audio" className="h-full">
+                  <AudioPage />
+                </TabsContent>
+              </ScrollArea>
             </main>
           </Tabs>
-        </div>
       </div>
       </>
   )
