@@ -20,24 +20,32 @@ def get_word_frequency(text: str):
             words_list[word.capitalize()] += 1
         else:
             words_list[word.capitalize()] = 1
-        
     
     return words_list
 
 def get_word_analysis(text: str):
     output = {}
 
-    output["word_count"] = get_word_frequency(text)
+    words_list_temp = get_word_frequency(text)
+    words_list = {key: value for key, value in words_list_temp.items() if value >= 2}
+
+    output["word_count"] = words_list
     r.extract_keywords_from_text(text)
-    output["phrases"] = [phrase for phrase in r.get_ranked_phrases() if len(phrase.split()) > 1 and re.match(r'^[A-Za-z]+$', phrase)]
+    output["phrases"] = [phrase for phrase in r.get_ranked_phrases() if len(phrase.split()) > 1 and re.match(r'^[A-Za-z\s]+$', phrase)]
     output["keywords"] = {token.lemma_.capitalize() for phrase in output["phrases"] for token in nlp(phrase) if token.is_alpha and not token.is_stop}
     output["syllable_count"] = textstat.syllable_count(text)
     output["lexicon_count"] = textstat.lexicon_count(text)
     output["sentence_count"] = textstat.sentence_count(text)
     output["character_count"] = textstat.char_count(text, ignore_spaces=True)
-    output["average_words_per_sentence"] = output["lexicon_count"]/output["sentence_count"]
-    output["unique_words"] = set(output["word_count"])
-    output["type_token_ratio"] = (len(output["unique_words"])/output["lexicon_count"]) * 100
+    if output["sentence_count"] > 0:
+        output["average_words_per_sentence"] = output["lexicon_count"] / output["sentence_count"]
+    else:
+        output["average_words_per_sentence"] = 0 
+    output["unique_words"] = set(words_list)
+    if output["lexicon_count"] > 0:
+        output["type_token_ratio"] = (len(words_list_temp) / output["lexicon_count"]) * 100
+    else:
+        output["type_token_ratio"] = 0
     
     """format of output:
     1. word count

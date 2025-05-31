@@ -27,7 +27,7 @@ import string
 import Levenshtein
 from spellchecker import SpellChecker
 from gramformer import Gramformer
-from modules.text_analysis.constants import templates
+from modules.text_analysis.constants import templates, meanings
 from random import randint
 
 gf = Gramformer(models=1, use_gpu=False)
@@ -49,6 +49,9 @@ def get_critique_statements(category, original, corrected):
     choice = randint(0,4)
     critique = templates[category][choice]
     return critique.format(original=original, corrected=corrected)
+
+def get_meaning(category):
+    return meanings[category]
 
 def get_outliers(original, corrected):
     outlier_edits = gf.get_edits("".join(char for char in original if char not in string.punctuation), "".join(char for char in corrected if char not in string.punctuation))
@@ -84,10 +87,16 @@ def get_other_category(original, corrected):
     return None
 
 def get_category(type, original, corrected):
+    no_punc_original = "".join(char for char in original if char.isalpha() or char==" ")
+    no_punc_corrected = "".join(char for char in corrected if char.isalpha() or char==" ")
+
+    if no_punc_original.lower() == no_punc_corrected.lower() and original.lower() != corrected.lower():
+        return "Punctuation Error"
     if original == "":
         return "Missing Word/s Added"
     if corrected == "":
         return "Extra Word/s Omitted"
+    
     match type:
         case "ADJ": 
             return "Adjective Error"
@@ -112,7 +121,7 @@ def get_category(type, original, corrected):
         case "NOUN:POSS": 
             return "Noun possessive"
         case "ORTH": 
-            return "Orthography"
+            return "Orthographic Error"
         case "PART": 
             return "Particle Error"
         case "PREP": 
@@ -158,6 +167,7 @@ def get_critique(edits):
 
         category = (get_category(edit[0], edit[1], edit[4]) if edit[0] !="OTHER" else get_other_category(edit[1], edit[4])) or get_outliers(edit[1], edit[4]) or "Unrecognized Error"
         temp["category"] = category
+        temp["meaning"] = get_meaning(category)
         temp["critique"] = get_critique_statements(category, edit[1], edit[4])
         # temp["original"] = original
         # temp["corrected"] = corrected
@@ -167,6 +177,7 @@ def get_critique(edits):
     return output
 """note what's done
 1. Category
+6. meaning
 5. critique
 """
 """todo the following:

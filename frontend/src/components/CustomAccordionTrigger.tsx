@@ -12,7 +12,7 @@ type propType = {
 
 const CustomAccordionTrigger = ({title, loading, theme}: propType) => {
   return (
-    <AccordionTrigger disabled={loading} className=" relative hover:no-underline dark:bg-[#2b2b2b] bg-[#f8f1fc] flex justify-between items-center py-2 px-4 rounded-md border">
+    <AccordionTrigger disabled={loading} className=" cursor-pointer relative hover:no-underline dark:bg-[#2b2b2b] bg-[#f8f1fc] flex justify-between items-center py-2 px-4 rounded-md border">
         <span>{title}</span>
         <span className="ml-auto absolute -right-1.5 flex items-center">
             <AnimatePresence mode="wait">

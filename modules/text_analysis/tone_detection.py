@@ -57,37 +57,35 @@ tone_examples = {
 
 tone_explanations = {
     "anger": {
-        "dominant": "The overall tone is predominantly angry. The language strongly suggests feelings of displeasure, frustration, or outrage.",
-        "slightly": "While other tones may be present, anger is slightly dominant. There are indications of displeasure or frustration, though perhaps mixed with other emotions."
+        "dominant": ["The overall tone is predominantly angry. The language strongly suggests feelings of displeasure, frustration, or outrage.", ["angry", "displeasure", "frustration", "outrage"]],
+        "slightly": ["While other tones may be present, anger is slightly dominant. There are indications of displeasure or frustration, though perhaps mixed with other emotions.", ["anger", "displeasure", "frustration", "other emotions"]],
     },
     "disgust": {
-        "dominant": "The overall tone is predominantly disgusted. The language strongly expresses revulsion, aversion, or strong dislike.",
-        "slightly": "While other tones may be present, disgust is slightly dominant. There are indications of revulsion or strong dislike, though perhaps mixed with other feelings."
+        "dominant": ["The overall tone is predominantly disgusted. The language strongly expresses revulsion, aversion, or strong dislike.", ["disgusted", "revulsion", "aversion", "strong dislike"]],
+        "slightly": ["While other tones may be present, disgust is slightly dominant. There are indications of revulsion or strong dislike, though perhaps mixed with other feelings.", ["disgust", "revulsion", "strong dislike", "other feelings"]],
     },
     "fear": {
-        "dominant": "The overall tone is predominantly fearful. The language strongly suggests worry, anxiety, or a sense of threat.",
-        "slightly": "While other tones may be present, fear is slightly dominant. There are indications of worry or anxiety, though perhaps mixed with other emotions."
+        "dominant": ["The overall tone is predominantly fearful. The language strongly suggests worry, anxiety, or a sense of threat.", ["fearful", "worry", "anxiety", "sense of threat"]],
+        "slightly": ["While other tones may be present, fear is slightly dominant. There are indications of worry or anxiety, though perhaps mixed with other emotions.", ["fear", "worry", "anxiety", "other emotions"]],
     },
     "joy": {
-        "dominant": "The overall tone is predominantly joyful. The language strongly expresses happiness, elation, or positive feelings.",
-        "slightly": "While other tones may be present, joy is slightly dominant. There are indications of happiness or positive feelings, though perhaps mixed with other emotions."
+        "dominant": ["The overall tone is predominantly joyful. The language strongly expresses happiness, elation, or positive feelings.", ["joyful", "happiness", "elation", "positive feelings"]],
+        "slightly": ["While other tones may be present, joy is slightly dominant. There are indications of happiness or positive feelings, though perhaps mixed with other emotions.", ["joy", "happiness", "positive feelings", "other emotions"]],
     },
     "neutral": {
-        "dominant": "The overall tone is predominantly neutral. The language lacks strong emotional coloring and focuses on objective information.",
-        "slightly": "While other subtle tones might be present, the overall tone leans towards neutral. There's a general lack of strong emotional expression."
+        "dominant": ["The overall tone is predominantly neutral. The language lacks strong emotional coloring and focuses on objective information.", ["neutral"]],
+        "slightly": ["While other subtle tones might be present, the overall tone leans towards neutral. There's a general lack of strong emotional expression.", ["neutral"]],
     },
     "sadness": {
-        "dominant": "The overall tone is predominantly sad. The language strongly conveys sorrow, disappointment, or grief.",
-        "slightly": "While other tones may be present, sadness is slightly dominant. There are indications of sorrow or disappointment, though perhaps mixed with other emotions."
+        "dominant": ["The overall tone is predominantly sad. The language strongly conveys sorrow, disappointment, or grief.", ["sad", "sorrow", "disappointment", "grief"]],
+        "slightly": ["While other tones may be present, sadness is slightly dominant. There are indications of sorrow or disappointment, though perhaps mixed with other emotions.", ["sadness", "sorrow", "disappointment", "other emotions"]],
     },
     "surprise": {
-        "dominant": "The overall tone is predominantly surprised. The language strongly indicates astonishment or unexpectedness.",
-        "slightly": "While other tones may be present, surprise is slightly dominant. There are indications of astonishment or unexpectedness, though perhaps mixed with other feelings."
+        "dominant": ["The overall tone is predominantly surprised. The language strongly indicates astonishment or unexpectedness.", ["surprised", "astonishment", "unexpectedness"]],
+        "slightly": ["While other tones may be present, surprise is slightly dominant. There are indications of astonishment or unexpectedness, though perhaps mixed with other feelings.", ["surprise", "astonishment", "unexpectedness", "other feelings"]],
     },
-    "undeterministic": "The overall tone of the text is undeterministic. There is no clear dominant emotion, or the emotional signals are too weak or conflicting to confidently classify the tone."
+    "undeterministic": ["The overall tone of the text is undeterministic. There is no clear dominant emotion, or the emotional signals are too weak or conflicting to confidently classify the tone.", ["undeterministic"]],
 }
-
-constant_suggestion = "Take a look at what follows – it'll show you how picking different words and usage of punctuation can change the whole feel of a sentence, even if it means the exact same thing."
 
 def detect_tone(text: str):
     result = classifier(text)[0]
@@ -100,8 +98,6 @@ def detect_tone(text: str):
     else:
         output['tone'] = tone_explanations[result['label']]['dominant']
 
-    output['constant'] = constant_suggestion
-
     option = randint( 0, 4 )
     
     output['current_tone_example'] = {result['label']: tone_examples[result['label']][option]}
@@ -109,9 +105,8 @@ def detect_tone(text: str):
 
     """format of output:
     1. tone
-    2. constant
-    3. current_tone_example
-    4. other_tone_example
+    2. current_tone_example
+    3. other_tone_example
     """
 
     return output

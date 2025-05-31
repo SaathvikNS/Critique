@@ -42,8 +42,6 @@ def get_simple_replacements(text, readability_score):
             if simpler_words:
                 suggestions.append({
                     "word": word,
-                    "word_index": token.i,
-                    "frequency": freq,
                     "suggestions": simpler_words
                 })
 

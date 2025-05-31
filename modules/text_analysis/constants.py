@@ -97,7 +97,7 @@ templates = {
     "The context requires a possessive noun. Use '{corrected}' rather than '{original}'.",
     "'{corrected}' clarifies ownership or relation more clearly than '{original}'."
 ],
-"Orthography": [
+"Orthographic Error": [
     "'{original}' contains a formatting or capitalization issue. It should be written as '{corrected}'.",
     "Consider changing '{original}' to '{corrected}' to correct the orthography.",
     "The word '{original}' appears to have an orthographic issue — '{corrected}' is the correct form.",
@@ -195,4 +195,35 @@ templates = {
     "The current placement of '{original}' disrupts flow; use '{corrected}' for better order.",
     "Word order issue: switch '{original}' with '{corrected}' to enhance sentence clarity."
 ],
+}             
+
+meanings = {
+    "Adjective Error": "The adjective used is incorrect or inappropriate for the context.",
+    "Adjective Form Error": "The adjective form is incorrect (e.g., it should be comparative or superlative).",
+    "Adverb Error": "The adverb used is incorrect or does not fit the sentence properly.",
+    "Conjunction Error": "The conjunction used is incorrect or missing, affecting sentence flow or meaning.",
+    "Contraction Error": "A contraction is used incorrectly or where it should be expanded.",
+    "Determiner Error": "A determiner (like 'a', 'an', 'the', or possessives) is missing or used incorrectly.",
+    "Extra Word/s Omitted": "One or more unnecessary words were removed to improve clarity and correctness.",
+    "Lexical Error": "A word is used incorrectly, often due to vocabulary misuse or wrong word choice for the context.",
+    "Missing Word/s Added": "One or more necessary words were inserted to complete the sentence grammatically or logically.",
+    "Morphology": "The word form is incorrect, often due to a root or affix issue.",
+    "Noun Error": "A noun is used incorrectly or is inappropriate in this context.",
+    "Noun inflection": "The noun form is incorrect, such as using a mass noun where a count noun is needed.",
+    "Noun number": "There is a number mismatch in the noun (singular/plural agreement is wrong).",
+    "Noun possessive": "The possessive form of the noun is incorrect or missing.",
+    "Orthographic Error": "There is a problem with spelling, capitalization, or spacing in the text.",
+    "Particle Error": "A required particle (such as in phrasal verbs) is missing or misused.",
+    "Preposition Error": "A preposition is incorrect, missing, or used awkwardly.",
+    "Pronoun Error": "The pronoun is incorrect in form, case, number, or type.",
+    "Punctuation Error": "There is an error in punctuation that affects the sentence structure or clarity.",
+    "Rephrased": "The word order is incorrect and disrupts the sentence structure.",
+    "Spelling Error": "A word is spelled incorrectly.",
+    "Subject-verb agreement Error": "The verb does not agree with the subject in number or person.",
+    "Unrecognized Error": "An error was found that doesn't fit into any specific category.",
+    "Verb Error": "The verb used is incorrect or inappropriate for the sentence.",
+    "Verb form": "The form of the verb is wrong (e.g., infinitive, gerund, or participle).",
+    "Verb inflection": "The verb is not properly inflected for tense or subject.",
+    "Verb tense Error": "The verb tense is incorrect for the sentence’s time or meaning.",
+    "Word order Error": "The word order is incorrect and disrupts the sentence structure.",
 }

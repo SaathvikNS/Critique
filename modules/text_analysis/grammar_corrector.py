@@ -4,7 +4,6 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from gramformer import Gramformer 
 from modules.text_analysis.sentence_splitter import chunk_text
 from modules.text_analysis.type_detector import get_critique
-import string
 
 model_name = "modules/text_analysis/model/model"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -56,6 +55,5 @@ def analyze_text(text: str):
         "issue_indeces": issue_indeces,
         "corrected_text": corrected_text,
         "correct_indeces": correct_indeces,
-        "edit":edits,
         "critique": critique,
     }

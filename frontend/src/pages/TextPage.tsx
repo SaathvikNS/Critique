@@ -1,4 +1,8 @@
-import { Accordion, AccordionContent, AccordionItem } from "@/components/ui/accordion";
+import {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,166 +10,330 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useThemeStore } from "@/store/themeStore";
 import CustomAccordionTrigger from "@/components/CustomAccordionTrigger";
+import api from "@/components/api";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import GrammarSection from "@/components/TextComponents/GrammarSection";
+import ReadabilitySection from "@/components/TextComponents/ReadabilitySection";
+import ToneSection from "@/components/TextComponents/ToneSection";
+import KeywordSection from "@/components/TextComponents/KeywordSection";
+import SummarySection from "@/components/TextComponents/SummarySection";
+import TopicSection from "@/components/TextComponents/TopicSection";
+import EntitySection from "@/components/TextComponents/EntitySection";
 
 const TextPage = () => {
-  const {theme} = useThemeStore()
+	const { theme } = useThemeStore();
 
-  const [analyzing, setAnalyzing] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(false)
-  const [move, setMove] = useState<boolean>(false)
-  const [moved, setMoved] = useState<boolean>(false)
+	const [analyzing, setAnalyzing] = useState<boolean>(false);
+	const [move, setMove] = useState<boolean>(false);
+	const [moved, setMoved] = useState<boolean>(false);
 
-  const [text, setText] = useState<string>("")
+	const [text, setText] = useState<string>("");
 
-  const handleCritiquePress = () => {
-    setAnalyzing(true)
-    setLoading(true)
-  }
+	const sections = [
+		{ key: "grammar", title: "Grammar and Spelling Correction" },
+		{ key: "readability", title: "Readability Analysis" },
+		{ key: "tone", title: "Tone Analysis" },
+		{ key: "summary", title: "Summarization" },
+		{ key: "keyword", title: "Keyword Extraction and Density Analysis" },
+		{ key: "topic", title: "Topic Detection" },
+		{ key: "entity", title: "Entity Recognition" },
+	];
 
-  const handleGetSample = () => {
-    setText("Hello World")
-  }
+	const [sectionData, setSectionData] = useState(
+		Object.fromEntries(
+			sections.map((s) => [s.key, { loading: false, content: "" }])
+		)
+	);
 
-  return (
-    <div className="flex flex-col items-center h-full">
+	const sectionComponents: Record<string, React.FC<{ content: any }>> = {
+		grammar: GrammarSection,
+		readability: ReadabilitySection,
+		tone: ToneSection,
+		summary: SummarySection,
+		keyword: KeywordSection,
+		topic: TopicSection,
+		entity: EntitySection,
+	};
 
-      {/* Title */}
-      <motion.h1
-        initial={false}
-        animate={{marginTop: !move ? "10rem" : 0}}
-        exit={{marginTop: '1rem'}}
-        transition={{duration: 0.5}}
-        onAnimationComplete={()=>{setMoved(true)}}
-        className={`select-none font-extrabold tracking-wide text-2xl dark:text-foreground text-neutral-700 mb-5 mt-40 ${moved ? "sticky" : ""} ${moved ? "top-0" : ""} ${moved ? "z-100" : ""} dark:bg-[#262626] bg-background w-full flex justify-center h-max py-2`}
-      >
-        Text Analysis
-      </motion.h1>
+	const handleCritiquePress = async () => {
+		if (text === "") {
+			toast.info("Please fill the text field");
+			return;
+		}
+		try {
+			setAnalyzing(true);
 
-      {/* Para */}
-      <AnimatePresence>
-        { !analyzing && (
-          <motion.p
-            initial={false}
-            animate={{opacity:1, height: 'auto', marginTop: "2rem"}}
-            exit={{opacity:0, height: 0, marginTop: 0}}
-            transition={{duration: 0.5}}
-            className="w-2/3 pl-2 select-none mt-8 sm:block hidden text-sm"
-          >
-            Please enter the text to be analysed
-          </motion.p>
-        )}
-      </AnimatePresence>
+			setSectionData((prev) =>
+				Object.fromEntries(
+					Object.keys(prev).map((key) => [
+						key,
+						{ ...prev[key], loading: true },
+					])
+				)
+			);
 
-      {/* TextArea */}
-      <Textarea
-        className="sm:w-2/3 sm:max-h-50 max-h-100 sm:mt-1"
-        placeholder="Enter your text here...."
-        defaultValue={text}
-        disabled={analyzing}
-      />
+			// wait for promise
+			const grammarPromise = api.post("/api/text/grammar-analysis", {
+				text,
+			});
 
-      {/* Buttons */}
-      <AnimatePresence>
-        { !analyzing && (
-          <motion.div
-            initial={false}
-            animate={{opacity:1}}
-            onAnimationComplete={() => {setTimeout(() => {setMove(true)}, 500)}}
-            exit={{opacity:0}}
-            className="mt-4 sm:w-2/3 w-full flex justify-between"
-          >
-            <Button onClick={handleGetSample} variant={"link"} className="text-xs cursor-pointer">
-              Click here to use sample text
-            </Button>
-            <Button onClick={handleCritiquePress} className="bg-neutral-600 dark:bg-neutral-200 text-neutral-200 dark:text-neutral-600 rounded-3xl h-8 cursor-pointer">
-              Critique
-            </Button>
-          </motion.div>
-        )}  
-      </AnimatePresence>
+			// initiate parallel calls
+			const originalTextEndpoints = {
+				readability: "api/text/readability-analysis",
+				tone: "api/text/tone-analysis",
+				entity: "api/text/entity-recognition",
+				topic: "/api/text/topic-detection",
+			};
 
-      {/* seperator */}
-      <AnimatePresence>
-        { moved && (
-          <motion.div
-            initial={{width:0}}
-            animate={{width: moved ? "100%" : 0}}
-            exit={{width: "100%"}}
-            transition={{duration: 0.5}}
-            className="w-3/4 mt-5 flex justify-center"
-          >
-            <div className="h-full w-full sm:w-3/4">
-              <Separator className="bg-border" />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+			Object.entries(originalTextEndpoints).forEach(
+				async ([key, endpoint]) => {
+					try {
+						const res = await api.post(endpoint, { text });
 
-        {/* Accordians */}
-        <AnimatePresence>
-          {
-            moved && (
-              <motion.div 
-                initial={{opacity:0, y:-10}}
-                animate={{opacity:100, y:0}}
-                exit={{opacity:100, y:0}}
-                transition={{delay:0.5 ,duration:0.5}}
-                onAnimationComplete={()=>{setTimeout(() => {
-                  setLoading(false)
-                }, 5000);}}
-                className=" w-full sm:w-2/3 mt-5"
-              >
-                <Accordion type="multiple">
-                  <AccordionItem value="1" className="my-4">
-                    <CustomAccordionTrigger title="Grammar and Spelling Correction" loading={loading} theme={theme} />
-                    <AccordionContent className="p-4 dark:bg-[#2b2b2b] bg-[#f8f1fc] dark:text-foreground text-neutral-700">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error deserunt non quasi officia magni suscipit consectetur repellat repellendus nihil nemo illum exercitationem voluptatibus ducimus rerum minima molestias nostrum, veniam iure dignissimos, libero, nam id ipsa explicabo alias? Numquam error magnam officia alias odit pariatur voluptatum provident nulla unde quod, natus doloribus! Labore, minus dicta id eos debitis neque magni possimus voluptatem ea rem quo officia soluta commodi necessitatibus odit nam! Ducimus nihil fugiat esse error temporibus ex necessitatibus minima exercitationem nesciunt, nam atque officia eos dolorum culpa veniam natus soluta dolor vel mollitia, similique assumenda odio eligendi accusantium? Quia, incidunt?
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="2" className="my-4">
-                    <CustomAccordionTrigger title="Readability Analysis" loading={loading} theme={theme} />
-                    <AccordionContent className="p-4 dark:bg-[#2b2b2b] bg-[#f8f1fc] dark:text-foreground text-neutral-700">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error deserunt non quasi officia magni suscipit consectetur repellat repellendus nihil nemo illum exercitationem voluptatibus ducimus rerum minima molestias nostrum, veniam iure dignissimos, libero, nam id ipsa explicabo alias? Numquam error magnam officia alias odit pariatur voluptatum provident nulla unde quod, natus doloribus! Labore, minus dicta id eos debitis neque magni possimus voluptatem ea rem quo officia soluta commodi necessitatibus odit nam! Ducimus nihil fugiat esse error temporibus ex necessitatibus minima exercitationem nesciunt, nam atque officia eos dolorum culpa veniam natus soluta dolor vel mollitia, similique assumenda odio eligendi accusantium? Quia, incidunt?
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="3" className="my-4">
-                    <CustomAccordionTrigger title="Tone Analysis" loading={loading} theme={theme} />
-                    <AccordionContent className="p-4 dark:bg-[#2b2b2b] bg-[#f8f1fc] dark:text-foreground text-neutral-700">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error deserunt non quasi officia magni suscipit consectetur repellat repellendus nihil nemo illum exercitationem voluptatibus ducimus rerum minima molestias nostrum, veniam iure dignissimos, libero, nam id ipsa explicabo alias? Numquam error magnam officia alias odit pariatur voluptatum provident nulla unde quod, natus doloribus! Labore, minus dicta id eos debitis neque magni possimus voluptatem ea rem quo officia soluta commodi necessitatibus odit nam! Ducimus nihil fugiat esse error temporibus ex necessitatibus minima exercitationem nesciunt, nam atque officia eos dolorum culpa veniam natus soluta dolor vel mollitia, similique assumenda odio eligendi accusantium? Quia, incidunt?
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="4" className="my-4">
-                    <CustomAccordionTrigger title="Keyword Extraction and Density Analysis" loading={loading} theme={theme} />
-                    <AccordionContent className="p-4 dark:bg-[#2b2b2b] bg-[#f8f1fc] dark:text-foreground text-neutral-700">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error deserunt non quasi officia magni suscipit consectetur repellat repellendus nihil nemo illum exercitationem voluptatibus ducimus rerum minima molestias nostrum, veniam iure dignissimos, libero, nam id ipsa explicabo alias? Numquam error magnam officia alias odit pariatur voluptatum provident nulla unde quod, natus doloribus! Labore, minus dicta id eos debitis neque magni possimus voluptatem ea rem quo officia soluta commodi necessitatibus odit nam! Ducimus nihil fugiat esse error temporibus ex necessitatibus minima exercitationem nesciunt, nam atque officia eos dolorum culpa veniam natus soluta dolor vel mollitia, similique assumenda odio eligendi accusantium? Quia, incidunt?
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="5" className="my-4">
-                    <CustomAccordionTrigger title="Topic Detection" loading={loading} theme={theme} />
-                    <AccordionContent className="p-4 dark:bg-[#2b2b2b] bg-[#f8f1fc] dark:text-foreground text-neutral-700">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error deserunt non quasi officia magni suscipit consectetur repellat repellendus nihil nemo illum exercitationem voluptatibus ducimus rerum minima molestias nostrum, veniam iure dignissimos, libero, nam id ipsa explicabo alias? Numquam error magnam officia alias odit pariatur voluptatum provident nulla unde quod, natus doloribus! Labore, minus dicta id eos debitis neque magni possimus voluptatem ea rem quo officia soluta commodi necessitatibus odit nam! Ducimus nihil fugiat esse error temporibus ex necessitatibus minima exercitationem nesciunt, nam atque officia eos dolorum culpa veniam natus soluta dolor vel mollitia, similique assumenda odio eligendi accusantium? Quia, incidunt?
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="6" className="my-4">
-                    <CustomAccordionTrigger title="Entity Recognition" loading={loading} theme={theme} />
-                    <AccordionContent className="p-4 dark:bg-[#2b2b2b] bg-[#f8f1fc] dark:text-foreground text-neutral-700">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error deserunt non quasi officia magni suscipit consectetur repellat repellendus nihil nemo illum exercitationem voluptatibus ducimus rerum minima molestias nostrum, veniam iure dignissimos, libero, nam id ipsa explicabo alias? Numquam error magnam officia alias odit pariatur voluptatum provident nulla unde quod, natus doloribus! Labore, minus dicta id eos debitis neque magni possimus voluptatem ea rem quo officia soluta commodi necessitatibus odit nam! Ducimus nihil fugiat esse error temporibus ex necessitatibus minima exercitationem nesciunt, nam atque officia eos dolorum culpa veniam natus soluta dolor vel mollitia, similique assumenda odio eligendi accusantium? Quia, incidunt?
-                    </AccordionContent>
-                  </AccordionItem>
-                  <AccordionItem value="7" className="my-4">
-                    <CustomAccordionTrigger title="Summarization" loading={loading} theme={theme} />
-                    <AccordionContent className="p-4 dark:bg-[#2b2b2b] bg-[#f8f1fc] dark:text-foreground text-neutral-700">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Error deserunt non quasi officia magni suscipit consectetur repellat repellendus nihil nemo illum exercitationem voluptatibus ducimus rerum minima molestias nostrum, veniam iure dignissimos, libero, nam id ipsa explicabo alias? Numquam error magnam officia alias odit pariatur voluptatum provident nulla unde quod, natus doloribus! Labore, minus dicta id eos debitis neque magni possimus voluptatem ea rem quo officia soluta commodi necessitatibus odit nam! Ducimus nihil fugiat esse error temporibus ex necessitatibus minima exercitationem nesciunt, nam atque officia eos dolorum culpa veniam natus soluta dolor vel mollitia, similique assumenda odio eligendi accusantium? Quia, incidunt?
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              </motion.div>
-            )
-          }
-        </AnimatePresence>
+						console.log(key);
+						console.log(res.data);
 
-    </div>
-  );
+						setSectionData((prev) => ({
+							...prev,
+							[key]: {
+								loading: false,
+								content: res.data,
+							},
+						}));
+					} catch (err) {
+						setSectionData((prev) => ({
+							...prev,
+							[key]: {
+								loading: false,
+								content: `Error: ${(err as Error).message}`,
+							},
+						}));
+					}
+				}
+			);
+
+			// await necessay response
+			let correctedText = text;
+
+			try {
+				const grammarResponse = await grammarPromise;
+				correctedText = grammarResponse.data.corrected_text;
+
+				console.log("grammar");
+				console.log(grammarResponse.data);
+
+				setSectionData((prev) => ({
+					...prev,
+					grammar: {
+						loading: false,
+						content: grammarResponse.data,
+					},
+				}));
+			} catch (err) {
+				setSectionData((prev) => ({
+					...prev,
+					grammar: {
+						loading: false,
+						content: `Error: ${(err as Error).message}`,
+					},
+				}));
+			}
+
+			// initiate awaited calls
+			const correctedTextEndpoints = {
+				keyword: "api/text/keyword-analysis",
+				summary: "/api/text/summary",
+			};
+
+			Object.entries(correctedTextEndpoints).forEach(
+				async ([key, endpoint]) => {
+					try {
+						const res = await api.post(endpoint, {
+							text: correctedText,
+						});
+
+						console.log(key);
+						console.log(res.data);
+
+						setSectionData((prev) => ({
+							...prev,
+							[key]: {
+								loading: false,
+								content: res.data,
+							},
+						}));
+					} catch (err) {
+						setSectionData((prev) => ({
+							...prev,
+							[key]: {
+								loading: false,
+								content: `Error: ${(err as Error).message}`,
+							},
+						}));
+					}
+				}
+			);
+		} catch (e) {
+			toast.error((e as Error).message);
+		}
+	};
+
+	const handleGetSample = async () => {
+		try {
+			const response = await api.get("/api/text/get-sample");
+			setText(response.data);
+		} catch (e) {
+			toast.error((e as Error).message);
+		}
+	};
+
+	return (
+		<div className="flex flex-col items-center h-full">
+			{/* Title */}
+			<motion.h1
+				initial={false}
+				animate={{ marginTop: !move ? "8rem" : 0 }}
+				exit={{ marginTop: "1rem" }}
+				transition={{ duration: 0.5 }}
+				onAnimationComplete={() => {
+					setMoved(true);
+				}}
+				className={`select-none font-bold tracking-wide text-2xl dark:text-foreground text-neutral-700 mb-5 mt-40 ${
+					moved ? "sticky" : ""
+				} ${moved ? "top-0" : ""} ${
+					moved ? "z-2" : ""
+				} dark:bg-[#262626] bg-background w-full flex justify-center h-max py-2`}
+			>
+				Text Analysis
+			</motion.h1>
+
+			{/* Para */}
+			<AnimatePresence>
+				{!analyzing && (
+					<motion.p
+						initial={false}
+						animate={{
+							opacity: 1,
+							height: "auto",
+							marginTop: "1rem",
+						}}
+						exit={{ opacity: 0, height: 0, marginTop: 0 }}
+						transition={{ duration: 0.5 }}
+						className="w-2/3 pl-2 select-none mt-4 sm:block hidden text-sm"
+					>
+						Please enter the text to be analysed
+					</motion.p>
+				)}
+			</AnimatePresence>
+
+			{/* TextArea */}
+			<Textarea
+				className="sm:w-2/3 sm:max-h-50 max-h-100 sm:mt-1 [scrollbar-width:none]"
+				placeholder="Enter your text here...."
+				value={text}
+				onChange={(e) => {
+					setText(e.target.value);
+				}}
+				disabled={analyzing}
+			/>
+
+			{/* Buttons */}
+			<AnimatePresence>
+				{!analyzing && (
+					<motion.div
+						initial={false}
+						animate={{ opacity: 1 }}
+						onAnimationComplete={() => {
+							setTimeout(() => {
+								setMove(true);
+							}, 500);
+						}}
+						exit={{ opacity: 0 }}
+						className="mt-4 sm:w-2/3 w-full flex justify-between"
+					>
+						<Button
+							onClick={handleGetSample}
+							variant={"link"}
+							className="text-xs cursor-pointer"
+						>
+							Click here to use sample text
+						</Button>
+						<Button
+							onClick={handleCritiquePress}
+							className="bg-neutral-600 dark:bg-neutral-200 text-neutral-200 dark:text-neutral-600 rounded-3xl h-8 cursor-pointer"
+						>
+							Critique
+						</Button>
+					</motion.div>
+				)}
+			</AnimatePresence>
+
+			{/* seperator */}
+			<AnimatePresence>
+				{moved && (
+					<motion.div
+						initial={{ width: 0 }}
+						animate={{ width: moved ? "100%" : 0 }}
+						exit={{ width: "100%" }}
+						transition={{ duration: 0.5 }}
+						className="w-3/4 mt-5 flex justify-center"
+					>
+						<div className="h-full w-full sm:w-3/4">
+							<Separator className="bg-border" />
+						</div>
+					</motion.div>
+				)}
+			</AnimatePresence>
+
+			{/* Accordians */}
+			<AnimatePresence>
+				{moved && (
+					<motion.div
+						initial={{ opacity: 0, y: -10 }}
+						animate={{ opacity: 100, y: 0 }}
+						exit={{ opacity: 100, y: 0 }}
+						transition={{ delay: 0.5, duration: 0.5 }}
+						className=" w-full sm:w-2/3 mt-5"
+					>
+						<Accordion type="multiple">
+							{Object.entries(sectionData).map(
+								([key, { loading, content }]) => {
+									const SectionComponent =
+										sectionComponents[key];
+									const SectionLabel = sections.find(
+										(section) => section.key === key
+									);
+
+									return (
+										<AccordionItem
+											key={key}
+											value={key}
+											className="my-4 w-full"
+										>
+											<CustomAccordionTrigger
+												title={
+													SectionLabel?.title || key
+												}
+												loading={loading}
+												theme={theme}
+											/>
+											<AccordionContent className="p-4 dark:bg-[#2b2b2b] bg-[#f8f1fc] dark:text-foreground text-neutral-700 w-full">
+												<SectionComponent
+													content={content}
+												/>
+											</AccordionContent>
+										</AccordionItem>
+									);
+								}
+							)}
+						</Accordion>
+					</motion.div>
+				)}
+			</AnimatePresence>
+			<Toaster richColors />
+		</div>
+	);
 };
 
 export default TextPage;
