@@ -16,7 +16,7 @@ router = APIRouter()
 class TextInput(BaseModel):
     text: str
 
-#note grammar analysis and correction
+#phase grammar analysis and correction
 @router.post("/grammar-analysis")
 def grammar_analysis(data: TextInput):
     try:
@@ -25,7 +25,7 @@ def grammar_analysis(data: TextInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))    
 
-#note Readability analysis
+#phase Readability analysis
 @router.post("/readability-analysis")
 def readability_analysis(data: TextInput):
     try:
@@ -34,7 +34,7 @@ def readability_analysis(data: TextInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-#note tone and emotion detection
+#phase tone and emotion detection
 @router.post("/tone-analysis")
 def tone_detection(data: TextInput):
     try:
@@ -43,7 +43,7 @@ def tone_detection(data: TextInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-#note keyword extraction and density analysis
+#phase keyword extraction and density analysis
 @router.post("/keyword-analysis")
 def keyword_analysis(data: TextInput):
     try:
@@ -52,7 +52,7 @@ def keyword_analysis(data: TextInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-#note topic detection
+#phase topic detection
 @router.post("/topic-detection")
 def topic_detection(data: TextInput):
     try:
@@ -61,7 +61,7 @@ def topic_detection(data: TextInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-#note entity recognition
+#phase entity recognition
 @router.post("/entity-recognition")
 def entity(data: TextInput):
     try:
@@ -70,7 +70,7 @@ def entity(data: TextInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-#note summary
+#phase summary
 @router.post("/summary")
 def summary(data: TextInput):
     try:
@@ -79,7 +79,7 @@ def summary(data: TextInput):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-#note get sample text
+#phase get sample text
 @router.get("/get-sample")
 def get_sample():
     try:
