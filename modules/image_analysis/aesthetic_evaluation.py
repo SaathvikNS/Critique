@@ -7,7 +7,6 @@ from PIL import Image
 from io import BytesIO
 import base64
 from skimage.feature import local_binary_pattern
-from scipy.spatial import distance
 from modules.image_analysis.image_quality_assessment import image_quality_assessment
 
 # phase leading line detection

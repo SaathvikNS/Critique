@@ -20,6 +20,22 @@ import KeywordSection from "@/components/TextComponents/KeywordSection";
 import SummarySection from "@/components/TextComponents/SummarySection";
 import TopicSection from "@/components/TextComponents/TopicSection";
 import EntitySection from "@/components/TextComponents/EntitySection";
+import type {
+	EntityContentType,
+	GrammarContentType,
+	KeywordContentType,
+	ReadabilityContentType,
+	SectionKey,
+	SummaryContentType,
+	ToneContentType,
+	TopicContentType,
+} from "@/utils/TextContentTypes";
+// import {
+// 	Tooltip,
+// 	TooltipContent,
+// 	TooltipTrigger,
+// } from "@/components/ui/tooltip";
+// import { RotateCw } from "lucide-react";
 
 const TextPage = () => {
 	const { theme } = useThemeStore();
@@ -46,7 +62,15 @@ const TextPage = () => {
 		)
 	);
 
-	const sectionComponents: Record<string, React.FC<{ content: any }>> = {
+	const sectionComponents: {
+		grammar: React.FC<{ content: GrammarContentType }>;
+		readability: React.FC<{ content: ReadabilityContentType }>;
+		tone: React.FC<{ content: ToneContentType }>;
+		summary: React.FC<{ content: SummaryContentType }>;
+		keyword: React.FC<{ content: KeywordContentType }>;
+		topic: React.FC<{ content: TopicContentType }>;
+		entity: React.FC<{ content: EntityContentType }>;
+	} = {
 		grammar: GrammarSection,
 		readability: ReadabilitySection,
 		tone: ToneSection,
@@ -205,6 +229,29 @@ const TextPage = () => {
 					moved ? "z-2" : ""
 				} dark:bg-[#262626] bg-background w-full flex justify-center h-max py-2`}
 			>
+				{/* <AnimatePresence>
+					{moved && (
+						<motion.button
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							exit={{ opacity: 0 }}
+							className="absolute top-0 right-0"
+							onClick={() => {
+								localStorage.setItem("activeTab", tab);
+								window.location.reload();
+							}}
+						>
+							<Tooltip>
+								<TooltipTrigger>
+									<RotateCw />
+								</TooltipTrigger>
+								<TooltipContent side="left">
+									<p>Reset</p>
+								</TooltipContent>
+							</Tooltip>
+						</motion.button>
+					)}
+				</AnimatePresence> */}
 				Text Analysis
 			</motion.h1>
 
@@ -291,16 +338,17 @@ const TextPage = () => {
 				{moved && (
 					<motion.div
 						initial={{ opacity: 0, y: -10 }}
-						animate={{ opacity: 100, y: 0 }}
-						exit={{ opacity: 100, y: 0 }}
-						transition={{ delay: 0.5, duration: 0.5 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 1, y: -10 }}
+						transition={{ duration: 0.5 }}
 						className=" w-full sm:w-2/3 mt-5"
 					>
 						<Accordion type="multiple">
 							{Object.entries(sectionData).map(
 								([key, { loading, content }]) => {
+									const typedkey = key as SectionKey;
 									const SectionComponent =
-										sectionComponents[key];
+										sectionComponents[typedkey];
 									const SectionLabel = sections.find(
 										(section) => section.key === key
 									);

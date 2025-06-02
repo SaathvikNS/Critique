@@ -12,7 +12,7 @@ from modules.image_analysis.text_extraction import extract_text_from_image
 
 router = APIRouter()
 
-SAMPLE_DIR = "assets"
+SAMPLE_DIR = "assets/ImageAssets"
 
 # phase object detection
 @router.post("/object-detection")

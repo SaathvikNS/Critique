@@ -7,22 +7,11 @@ import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { useState, useEffect, type ReactNode } from "react";
 import { Separator } from "../ui/separator";
 import { AnimatePresence, motion } from "framer-motion";
-
-type IndexPair = [number, number];
-
-interface CritiqueItem {
-	category: string;
-	meaning: string;
-	critique: string;
-}
-
-interface ContentType {
-	original_text: string;
-	issue_indeces: IndexPair[];
-	corrected_text: string;
-	correct_indeces: IndexPair[];
-	critique: CritiqueItem[];
-}
+import type {
+	CritiqueItem,
+	GrammarContentType,
+	IndexPair,
+} from "@/utils/TextContentTypes";
 
 const isMobileDevice = () => window.innerWidth <= 768;
 
@@ -106,7 +95,7 @@ const renderHighlightedText = (
 	});
 };
 
-const GrammarSection = ({ content }: { content: ContentType }) => {
+const GrammarSection = ({ content }: { content: GrammarContentType }) => {
 	const [showCritiques, setShowCritiques] = useState(false);
 	const [isMobile, setIsMobile] = useState(false);
 

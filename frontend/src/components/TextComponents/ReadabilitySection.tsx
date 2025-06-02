@@ -9,28 +9,12 @@ import {
 import { AnimatePresence, motion } from "framer-motion";
 import RadialScore from "../RadialScore";
 import { Badge } from "../ui/badge";
-
-interface complexWords {
-	word: string;
-	suggestions: string[];
-}
-
-type contentType = [
-	{
-		reading_ease: number;
-		standard_grade: string;
-		reading_time: number;
-	},
-	complexWords[]
-];
+import type {
+	HighlightedWordProps,
+	ReadabilityContentType,
+} from "@/utils/TextContentTypes";
 
 const isMobileDevice = () => window.innerWidth <= 768;
-
-interface HighlightedWordProps {
-	original_word: string;
-	suggestion_array: string[];
-	isMobile: boolean;
-}
 
 const HighlightedWord = ({
 	original_word,
@@ -78,7 +62,11 @@ const HighlightedWord = ({
 	}
 };
 
-const ReadabilitySection = ({ content }: { content: contentType }) => {
+const ReadabilitySection = ({
+	content,
+}: {
+	content: ReadabilityContentType;
+}) => {
 	const [isMobile, setIsMobile] = useState<boolean>(false);
 	const [showWords, setShowWords] = useState<boolean>(false);
 

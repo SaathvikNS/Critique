@@ -3,21 +3,9 @@ import { useState } from "react";
 import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
 import RadialScore from "../RadialScore";
+import type { KeywordContentType } from "@/utils/TextContentTypes";
 
-interface ContentType {
-	word_count: Record<string, number>;
-	phrases: string[];
-	keywords: string[];
-	syllable_count: number;
-	lexicon_count: number;
-	sentence_count: number;
-	character_count: number;
-	average_words_per_sentence: number;
-	unique_words: string[];
-	type_token_ratio: number;
-}
-
-const KeywordSection = ({ content }: { content: ContentType }) => {
+const KeywordSection = ({ content }: { content: KeywordContentType }) => {
 	const filteredWordCount: Record<string, number> = {};
 
 	for (const [word, count] of Object.entries(content.word_count)) {

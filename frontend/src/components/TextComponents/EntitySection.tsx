@@ -1,3 +1,4 @@
+import type { EntityContentType } from "@/utils/TextContentTypes";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import {
 	Table,
@@ -8,7 +9,7 @@ import {
 	TableRow,
 } from "../ui/table";
 
-const EntitySection = ({ content }: { content: string[][] }) => {
+const EntitySection = ({ content }: { content: EntityContentType }) => {
 	if (content.length === 0) {
 		return (
 			<p className="text-muted-foreground">

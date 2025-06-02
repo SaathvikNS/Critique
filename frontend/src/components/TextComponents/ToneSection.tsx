@@ -8,14 +8,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "../ui/table";
-
-type ToneType = [string, string[]];
-
-interface ContentType {
-	tone: ToneType;
-	current_tone_example: Record<string, string>;
-	other_tone_example: Record<string, string>;
-}
+import type { ToneContentType } from "@/utils/TextContentTypes";
 
 const highlightKeywords = (text: string, keywords: string[]) => {
 	const regex = new RegExp(`\\b(${keywords.join("|")})\\b`, "gi");
@@ -32,7 +25,7 @@ const highlightKeywords = (text: string, keywords: string[]) => {
 	);
 };
 
-const ToneSection = ({ content }: { content: ContentType }) => {
+const ToneSection = ({ content }: { content: ToneContentType }) => {
 	const [showCurrentExample, setShowCurrentExample] =
 		useState<boolean>(false);
 

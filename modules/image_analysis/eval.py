@@ -1,9 +1,9 @@
 from random import randint
 
-# from object_detection import object_detection
-# from image_quality_assessment import image_quality_assessment
-# from aesthetic_evaluation import aesthetic_evaluation
-# from emotion_and_mood_analysis import emotion_mood_analysis
+from object_detection import object_detection
+from image_quality_assessment import image_quality_assessment
+from aesthetic_evaluation import aesthetic_evaluation
+from emotion_and_mood_analysis import emotion_mood_analysis
 from text_extraction import extract_text_from_image
 
 for i in range(28,29):
@@ -70,7 +70,7 @@ for i in range(28,29):
 
     # print("Color Emotion: ", emaresult["color_emotion"]) #format like (emotion - percentage)
 
-    # phase metadata extraction
+    # phase Text extraction
     # tresult = extract_text_from_image(image_path)
 
     # print(tresult["extracted_text"]) #format like (emotion - percentage)

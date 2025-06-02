@@ -9,8 +9,9 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "../ui/button";
+import type { TopicContentType } from "@/utils/TextContentTypes";
 
-const TopicSection = ({ content }: { content: Record<string, number> }) => {
+const TopicSection = ({ content }: { content: TopicContentType }) => {
 	const entries = Object.entries(content).map(([key, value]) => ({
 		name: key,
 		value,
